@@ -12,3 +12,8 @@ C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debu
 C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.csproj.GenerateResource.Cache
 C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.exe
 C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.pdb
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\RibbonControlsLibrary.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\WPFExtensions.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\WPFExtensions.pdb

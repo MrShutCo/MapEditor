@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,20 +32,23 @@ namespace MapEditor {
 
     public partial class MainWindow : Window {
 
-        public Tile[,] MapInformation;
         public MapEditControl CurrentContol;
-        SolidColorBrush CurrentColor;
+
+        public Map Map;
+
+        public int X = 16;
+        public int Y = 16;
+        public int TileSize = 32;
+
+        public ImageBrush CurrentImage;
 
         public MainWindow() {
             InitializeComponent();
 
-            MapInformation = new Tile[16, 16];
-            for (int x = 0; x < 16; x++)
-                for (int y = 0; y < 16; y++)
-                    MapInformation[x, y] = new Tile("0");
+            Map = new Map(X, Y);
+
             UpdateMap();
             CurrentContol = MapEditControl.Draw;
-            CurrentColor = new SolidColorBrush(Colors.Red);
         }
 
 
@@ -51,15 +57,19 @@ namespace MapEditor {
         }
 
         public void UpdateMap() {
-            for (int x = 0; x < 16; x++)
-                for (int y = 0; y < 16; y++) {
-                    Rectangle rect = new Rectangle() { Width = 16, Height = 16 };
-                    rect.Fill = IntColor.Colours[MapInformation[x, y].Color];
+            for (int x = 0; x < X; x++)
+                for (int y = 0; y < Y; y++) {
+
+
+
+                    Rectangle rect = new Rectangle() { Width = TileSize, Height = TileSize };
+                    rect.Fill = new SolidColorBrush(Colors.White);
                     rect.StrokeThickness = 1;
                     rect.Stroke = new SolidColorBrush(Colors.Black);
+                    //MapInformation[x, y].Color = 
                     MapViewer.Children.Add(rect);
-                    Canvas.SetTop(rect, x * 16);
-                    Canvas.SetLeft(rect, y * 16);
+                    Canvas.SetTop(rect, x * TileSize);
+                    Canvas.SetLeft(rect, y * TileSize);
                 }
         }
 
@@ -67,13 +77,36 @@ namespace MapEditor {
 
         }
 
+        // Zoom on Mouse wheel
+
+        private double zoomMax = 5;
+        private double zoomMin = 0.5;
+        private double zoomSpeed = 0.001;
+        private double zoom = 1;
+        private void MapViewer_MouseWheel(object sender, MouseWheelEventArgs e) {
+            zoom += zoomSpeed * e.Delta; // Ajust zooming speed (e.Delta = Mouse spin value )
+            if (zoom < zoomMin) { zoom = zoomMin; } // Limit Min Scale
+            if (zoom > zoomMax) { zoom = zoomMax; } // Limit Max Scale
+
+            Point mousePos = e.GetPosition(MapViewer);
+
+            if (zoom > 1) {
+                MapViewer.RenderTransform = new ScaleTransform(zoom, zoom, mousePos.X, mousePos.Y); // transform Canvas size from mouse position
+                
+            }
+            else {
+                MapViewer.RenderTransform = new ScaleTransform(zoom, zoom); // transform Canvas size
+            }
+        }
+
+        //TODO: Probably delete, It's not too useful now, no functionality
         private void ChangeMap_Click_1(object sender, RoutedEventArgs e) {
             string textBox = new TextRange(MapData.Document.ContentStart, MapData.Document.ContentEnd).Text;
             int placeHolder = 0;
-            for (int x = 0; x < 16; x++)
-                for (int y = 0; y < 16; y++) {
+            for (int x = 0; x < X; x++)
+                for (int y = 0; y < Y; y++) {
                     if (Char.IsDigit(textBox[placeHolder])) {
-                        MapInformation[x, y].Color = textBox[placeHolder].ToString();
+                        //Map.TileInformation[x, y].C = textBox[placeHolder].ToString();
                         placeHolder++;
                     }
                 }
@@ -83,7 +116,8 @@ namespace MapEditor {
         private void MapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             if (CurrentContol == MapEditControl.Draw) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
-                ClickedRectangle.Fill = CurrentColor;
+                ClickedRectangle.Fill = CurrentImage;
+                //UpdateMap();
             }
             if (CurrentContol == MapEditControl.Erase) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
@@ -95,7 +129,8 @@ namespace MapEditor {
             if (CurrentContol == MapEditControl.Draw) {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
-                    ClickedRectangle.Fill = CurrentColor;
+                    ClickedRectangle.Fill = CurrentImage;
+                    //UpdateMap();
                 }
             }
             if (CurrentContol == MapEditControl.Erase) {
@@ -104,6 +139,11 @@ namespace MapEditor {
                     ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
                 }
             }
+        }
+
+        private void SpriteSheet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            
+
         }
 
         private void DrawButton_Click(object sender, RoutedEventArgs e) {
@@ -121,6 +161,62 @@ namespace MapEditor {
         private void UnlockControls() {
             DrawButton.IsEnabled = true;
             EraseButton.IsEnabled = true;
+        }
+
+        private void Savebutton_Click(object sender, RoutedEventArgs e) {
+            SaveFileDialog saveFile = new SaveFileDialog();
+            saveFile.DefaultExt = ".json";
+            saveFile.Filter = "JSON Files (.json)|*.json";
+
+            // Display OpenFileDialog by calling ShowDialog method
+            Nullable<bool> result = saveFile.ShowDialog();
+
+            // Get the selected file name and display in a TextBox
+            if (result == true) {
+                // Open document
+                string filename = saveFile.FileName;
+                JsonSerializer serial = new JsonSerializer();
+                var map = JsonConvert.SerializeObject(Map.TileInformation);
+                using (StreamWriter sw = new StreamWriter(filename))
+                    using(JsonWriter writer = new JsonTextWriter(sw))
+{
+                    serial.Serialize(writer, map);
+                    // {"ExpiryDate":new Date(1230375600000),"Price":0}
+                }
+            }
+        }
+
+        private void LoadImageButton_Click(object sender, RoutedEventArgs e) {
+            OpenFileDialog image = new OpenFileDialog();
+            image.DefaultExt = ".png";
+            image.Filter = "PNG Files (.png)|*.png";
+
+            Nullable<bool> result = image.ShowDialog();
+
+            if (result == true) {
+                string fileName = image.FileName;
+                Map.LoadTileSheet(new BitmapImage(new Uri(fileName)));
+            }
+
+            for (int y = 0; y < Map.TileSheet.Height / 32; y++) {
+                for (int x = 0; x < Map.TileSheet.Width / 32; x++) {
+                    Rectangle rect = new Rectangle() { Width = TileSize, Height = TileSize };
+                    rect.Fill = new ImageBrush(Map.ToBitmapImage(Map.SpriteSheet[x,y]));
+                    rect.StrokeThickness = 0;
+                    rect.Stroke = new SolidColorBrush(Colors.Black);
+                    //MapInformation[x, y].Color = 
+                    Sprite.Children.Add(rect);
+                    Canvas.SetTop(rect, y * TileSize);
+                    Canvas.SetLeft(rect, x * TileSize);
+                }
+            }
+            Sprite.Width = Map.TileSheet.Width / 2;
+            Sprite.Height = Map.TileSheet.Height / 2;
+      }
+
+        private void Sprite_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            Rectangle curr = (Rectangle)e.OriginalSource;
+            CurrentImage = (ImageBrush)curr.Fill;
         }
     }
 }
