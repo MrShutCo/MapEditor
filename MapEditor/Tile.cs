@@ -12,12 +12,16 @@ namespace MapEditor {
     public class Tile {
 
         //Unused
-        public Image TileImage;
+        public Bitmap TileImage;
 
         public int TileID;
 
-        public Tile(int tileID) {
+        public int X, Y;
+
+        public Tile(int tileID, int x, int y) {
             TileID = tileID;
+            X = x;
+            Y = y;
         }
     }
 }

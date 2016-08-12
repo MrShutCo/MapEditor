@@ -24,10 +24,11 @@
         <Button x:Name="LoadImageButton" Content="Load Image" HorizontalAlignment="Left" Margin="39,270,0,0" VerticalAlignment="Top" Width="75" Click="LoadImageButton_Click"/>
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="256" Margin="690,221,0,0" VerticalAlignment="Top" Width="256">
             <ScrollViewer x:Name="TileViewer" Height="256" Width="256" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <Canvas x:Name="Sprite" HorizontalAlignment="Left" Height="256" Margin="0,0,-2,-2" VerticalAlignment="Top" Width="256" MouseLeftButtonDown="Sprite_MouseLeftButtonDown"/>
+                <Canvas x:Name="Sprite" HorizontalAlignment="Left" Height="512" Margin="0,0,-2,-2" VerticalAlignment="Top" Width="512" MouseLeftButtonDown="Sprite_MouseLeftButtonDown"/>
             </ScrollViewer>
 
         </Border>
+        <Button x:Name="FillButton" Content="Fill" HorizontalAlignment="Left" Margin="722,121,0,0" VerticalAlignment="Top" Width="75" Click="FillButton_Click"/>
 
 
     </Grid>

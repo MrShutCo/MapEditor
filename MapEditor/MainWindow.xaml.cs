@@ -42,12 +42,13 @@ namespace MapEditor {
 
         public ImageBrush CurrentImage;
 
+        public int CurrentTile;
+
         public MainWindow() {
             InitializeComponent();
 
             Map = new Map(X, Y);
-
-            UpdateMap();
+            RestartMap();
             CurrentContol = MapEditControl.Draw;
         }
 
@@ -56,20 +57,23 @@ namespace MapEditor {
 
         }
 
-        public void UpdateMap() {
+        void RestartMap() {
             for (int x = 0; x < X; x++)
                 for (int y = 0; y < Y; y++) {
-
-
-
                     Rectangle rect = new Rectangle() { Width = TileSize, Height = TileSize };
                     rect.Fill = new SolidColorBrush(Colors.White);
                     rect.StrokeThickness = 1;
                     rect.Stroke = new SolidColorBrush(Colors.Black);
-                    //MapInformation[x, y].Color = 
                     MapViewer.Children.Add(rect);
                     Canvas.SetTop(rect, x * TileSize);
                     Canvas.SetLeft(rect, y * TileSize);
+                }
+        }
+
+        public void UpdateMap() {
+            for (int x = 0; x < X; x++)
+                for (int y = 0; y < Y; y++) {
+                    //Map.TileInformation[x, y].
                 }
         }
 
@@ -117,11 +121,23 @@ namespace MapEditor {
             if (CurrentContol == MapEditControl.Draw) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = CurrentImage;
+                int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                Map.TileInformation[x, y].TileID = CurrentTile;
                 //UpdateMap();
             }
             if (CurrentContol == MapEditControl.Erase) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
+            }
+            if (CurrentContol == MapEditControl.Fill) {
+                Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
+                ClickedRectangle.Fill = CurrentImage;
+                int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                int oldTile = Map.TileInformation[x, y].TileID;
+                //Map.TileInformation[x, y].TileID = CurrentTile;
+                FloodFill(Map.TileInformation[x, y], oldTile, CurrentTile);
             }
         }
 
@@ -130,6 +146,9 @@ namespace MapEditor {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                     ClickedRectangle.Fill = CurrentImage;
+                    int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                    int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    Map.TileInformation[x, y].TileID = CurrentTile;
                     //UpdateMap();
                 }
             }
@@ -176,11 +195,17 @@ namespace MapEditor {
                 // Open document
                 string filename = saveFile.FileName;
                 JsonSerializer serial = new JsonSerializer();
+                int[,] mapData = new int[X,Y];
+                for (int x = 0; x < X; x++) {
+                    for (int y = 0; y < Y; y++) {
+                        mapData[x, y] = Map.TileInformation[x, y].TileID;
+                    }
+                }
                 var map = JsonConvert.SerializeObject(Map.TileInformation);
                 using (StreamWriter sw = new StreamWriter(filename))
                     using(JsonWriter writer = new JsonTextWriter(sw))
 {
-                    serial.Serialize(writer, map);
+                    serial.Serialize(writer, mapData);
                     // {"ExpiryDate":new Date(1230375600000),"Price":0}
                 }
             }
@@ -210,13 +235,33 @@ namespace MapEditor {
                     Canvas.SetLeft(rect, x * TileSize);
                 }
             }
-            Sprite.Width = Map.TileSheet.Width / 2;
-            Sprite.Height = Map.TileSheet.Height / 2;
+            Sprite.Width = Map.TileSheet.Width;
+            Sprite.Height = Map.TileSheet.Height;
       }
 
         private void Sprite_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             Rectangle curr = (Rectangle)e.OriginalSource;
             CurrentImage = (ImageBrush)curr.Fill;
+            int x = (int)Canvas.GetLeft(curr) / 32;
+            int y = (int)Canvas.GetTop(curr) / 32;
+            CurrentTile = y * Map.SpriteSheet.GetLength(0) + x;
+        }
+
+        private void FillButton_Click(object sender, RoutedEventArgs e) {
+            CurrentContol = MapEditControl.Fill;
+        }
+
+        private void FloodFill(Tile node, int targetID, int replaceID) {
+            if (targetID == replaceID) return;
+            if (node.TileID != targetID) return;
+
+            node.TileID = replaceID;
+            FloodFill(Map.TileInformation[node.X, node.Y + 1], targetID, replaceID);
+            FloodFill(Map.TileInformation[node.X, node.Y - 1], targetID, replaceID);
+            FloodFill(Map.TileInformation[node.X - 1, node.Y], targetID, replaceID);
+            FloodFill(Map.TileInformation[node.X + 1, node.Y], targetID, replaceID);
+
+            return;
         }
     }
 }
