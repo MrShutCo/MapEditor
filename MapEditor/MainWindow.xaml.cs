@@ -93,14 +93,14 @@ namespace MapEditor {
             if (zoom > zoomMax) { zoom = zoomMax; } // Limit Max Scale
 
             Point mousePos = e.GetPosition(MapViewer);
+            st.ScaleX = zoom;
+            st.ScaleY = zoom;
 
-            if (zoom > 1) {
-                MapViewer.RenderTransform = new ScaleTransform(zoom, zoom, mousePos.X, mousePos.Y); // transform Canvas size from mouse position
-
+            if (zoom != zoomMin || zoom != zoomMax) {
+                st.CenterX = mousePos.X;
+                st.CenterY = mousePos.Y;
             }
-            else {
-                MapViewer.RenderTransform = new ScaleTransform(zoom, zoom); // transform Canvas size
-            }
+            
         }
 
         //TODO: Probably delete, It's not too useful now, no functionality
@@ -144,7 +144,7 @@ namespace MapEditor {
         void SetImageAtCoord(int x, int y) {
             IEnumerable<Rectangle> rectangles = MapViewer.Children.OfType<Rectangle>();
             Map.TileInformation[x, y].TileID = CurrentTile;
-            foreach(Rectangle rect in rectangles) {
+            foreach (Rectangle rect in rectangles) {
                 if (Canvas.GetLeft(rect) / TileSize == x && Canvas.GetTop(rect) / TileSize == y) {
                     rect.Fill = CurrentImage;
                 }
@@ -166,7 +166,12 @@ namespace MapEditor {
 
         }
 
+        Point lastPos;
+        bool isDragged = false;
+
         private void MapViewer_MouseMove(object sender, MouseEventArgs e) {
+
+
             if (CurrentContol == MapEditControl.Draw) {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
@@ -181,8 +186,31 @@ namespace MapEditor {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                     ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
+
                 }
             }
+            if (isDragged == false) return;
+
+            if (e.RightButton == MouseButtonState.Pressed) {
+                var pos = e.GetPosition(this);
+
+                var matrix = mt.Matrix;
+                matrix.Translate(pos.X - lastPos.X, pos.Y - lastPos.Y);
+                mt.Matrix = matrix;
+                lastPos = pos;
+            }
+
+        }
+
+        private void MapViewer_MouseRightButtonUp(object sender, MouseButtonEventArgs e) {
+            MapViewer.ReleaseMouseCapture();
+            isDragged = false;
+        }
+
+        private void MapViewer_MouseRightButtonDown(object sender, MouseButtonEventArgs e) {
+            MapViewer.CaptureMouse();
+            lastPos = e.GetPosition(this);
+            isDragged = true;
         }
 
         private void SpriteSheet_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
@@ -278,7 +306,8 @@ namespace MapEditor {
             CurrentTile = y * Map.SpriteSheet.GetLength(0) + x;
         }
 
-        
+
+
 
 
     }
