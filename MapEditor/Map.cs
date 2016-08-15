@@ -7,14 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace MapEditor {
     public class Map {
-
+        
         public Bitmap TileSheet;
 
         public Bitmap[,] SpriteSheet;
@@ -33,7 +32,7 @@ namespace MapEditor {
             TileInformation = new Tile[width, height];
             for (int x = 0; x < width; x++)
                 for (int y = 0; y < height; y++)
-                    TileInformation[x, y] = new Tile(0, x, y);
+                    TileInformation[x, y] = new Tile(-1, x, y);
         }
 
         //TODO: Add a error handler
