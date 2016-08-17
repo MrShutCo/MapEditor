@@ -41,6 +41,11 @@ namespace MapEditor {
             SplitIntoSheet();
         }
 
+        public void ProcessNull() {
+            foreach(Tile t in TileInformation) {
+                t.proccessed = false;
+            }
+        }
 
         //Might not even work
         public int FindImage(Bitmap bit) {
@@ -63,6 +68,8 @@ namespace MapEditor {
                 }
             }
         }
+
+        #region Converters
 
         public BitmapImage ToBitmapImage(Bitmap bitmap) {
             using (var memory = new MemoryStream()) {
@@ -111,5 +118,7 @@ namespace MapEditor {
                 return new Bitmap(bitmap);
             }
         }
+
+        #endregion
     }
 }

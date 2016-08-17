@@ -3,7 +3,6 @@ C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\bin\Debug\MapEditor.exe
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\bin\Debug\MapEditor.pdb
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\bin\Debug\WPFExtensions.pdb
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MapEditor.csprojResolveAssemblyReference.cache
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MainWindow.g.cs
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\App.g.cs

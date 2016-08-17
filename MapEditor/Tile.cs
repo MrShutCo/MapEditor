@@ -18,10 +18,13 @@ namespace MapEditor {
 
         public int X, Y;
 
+        public bool proccessed;
+
         public Tile(int tileID, int x, int y) {
             TileID = tileID;
             X = x;
             Y = y;
+            proccessed = false;
         }
     }
 }

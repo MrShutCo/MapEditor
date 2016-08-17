@@ -1,7 +1,6 @@
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\bin\Debug\DecisionMaker.exe.config
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\bin\Debug\DecisionMaker.exe
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\bin\Debug\DecisionMaker.pdb
-C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\obj\Debug\DecisionMaker.csprojResolveAssemblyReference.cache
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\obj\Debug\MainWindow.g.cs
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\obj\Debug\App.g.cs
 C:\Users\Mark\Documents\GitHub\MapEditor\DecisionMaker\obj\Debug\DecisionMaker_MarkupCompile.cache
