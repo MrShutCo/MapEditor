@@ -38,6 +38,9 @@
         <Button x:Name="FillButton" Content="Fill" HorizontalAlignment="Left" Margin="722,121,0,0" VerticalAlignment="Top" Width="75" Click="FillButton_Click"/>
         
         <Button x:Name="ClearButton" Content="Clear" HorizontalAlignment="Left" Margin="722,46,0,0" VerticalAlignment="Top" Width="75" Click="ClearButton_Click"/>
+        <Button x:Name="LineButton" Content="Line" HorizontalAlignment="Left" Margin="722,146,0,0" VerticalAlignment="Top" Width="75" Click="LineButton_Click"/>
+        <Button x:Name="RoomButton" Content="Box" HorizontalAlignment="Left" Margin="722,171,0,0" VerticalAlignment="Top" Width="75" Click="RoomButton_Click"/>
+        <CheckBox x:Name="fillRoom" Content="fill?" HorizontalAlignment="Left" Margin="802,174,0,0" VerticalAlignment="Top"/>
 
 
     </Grid>

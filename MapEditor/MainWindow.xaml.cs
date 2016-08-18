@@ -36,8 +36,8 @@ namespace MapEditor {
 
         public Map Map;
 
-        public int X = 16;
-        public int Y = 16;
+        public int X = 32;
+        public int Y = 32;
         public int TileSize = 32;
 
         //Just painting stuff for rectangles
@@ -63,6 +63,7 @@ namespace MapEditor {
 
         #region MapControls
 
+        //This actaully starts up the map, creating all the rectangles, and adding to Canvas
         void RestartMap() {
             for (int x = 0; x < X; x++)
                 for (int y = 0; y < Y; y++) {
@@ -76,11 +77,13 @@ namespace MapEditor {
                 }
         }
 
+        //Zoom function, used with scroll wheel
         private double zoomMax = 3;
-        private double zoomMin = 0.5;
+        private double zoomMin = 0.2;
         private double zoomSpeed = 0.001;
         private double zoom = 1;
         private void MapViewer_MouseWheel(object sender, MouseWheelEventArgs e) {
+
             zoom += zoomSpeed * e.Delta; // Ajust zooming speed (e.Delta = Mouse spin value )
             if (zoom < zoomMin) { zoom = zoomMin; } // Limit Min Scale
             if (zoom > zoomMax) { zoom = zoomMax; } // Limit Max Scale
@@ -130,6 +133,19 @@ namespace MapEditor {
             EraseButton.IsEnabled = false;
         }
 
+        private void LineButton_Click(object sender, RoutedEventArgs e) {
+            UnlockControls();
+            CurrentContol = MapEditControl.Line;
+            LineButton.IsEnabled = false;
+        }
+
+        private void RoomButton_Click(object sender, RoutedEventArgs e) {
+            UnlockControls();
+            CurrentContol = MapEditControl.Sqaure;
+            RoomButton.IsEnabled = false;
+        }
+
+        //Saves Map.TileInformation to a JSON object
         private void Savebutton_Click(object sender, RoutedEventArgs e) {
             SaveFileDialog saveFile = new SaveFileDialog();
             saveFile.DefaultExt = ".json";
@@ -157,6 +173,7 @@ namespace MapEditor {
             }
         }
 
+        //Load a tilesheet in (should be 32x32), example included on top folder
         private void LoadImageButton_Click(object sender, RoutedEventArgs e) {
             OpenFileDialog image = new OpenFileDialog();
             image.DefaultExt = ".png";
@@ -207,7 +224,7 @@ namespace MapEditor {
 
         //When you just click on a tile, it runs this. Other functionality commented due to possible errors (none so far)
         private void MapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            /*if (CurrentContol == MapEditControl.Draw) {
+            if (CurrentContol == MapEditControl.Draw) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = CurrentImage;
                 int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
@@ -218,7 +235,7 @@ namespace MapEditor {
             if (CurrentContol == MapEditControl.Erase) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
-            }*/
+            }
             if (CurrentContol == MapEditControl.Fill) {
                 CheckTileIDs(-1);
                 //All the good stuff for converting Canvas rect location to Map.TileInformation
@@ -232,11 +249,55 @@ namespace MapEditor {
                 //SetTileIDs(-1);
                 CheckTileIDs(-1);
                 //The big problem
-                FloodFill(Map.TileInformation[x, y], oldTile, CurrentTile);
+                FloodFill2(Map.TileInformation[x, y], oldTile, CurrentTile);
                 CheckTileIDs(0);
             }
+
+
+            if (CurrentContol == MapEditControl.Line) {
+
+                Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
+                ClickedRectangle.Fill = CurrentImage;
+
+
+                if (!lineStarted) {
+                    x1 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                    y1 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    lineStarted = true;
+                }
+                else {
+                    lineStarted = false;
+                    x2 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                    y2 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    LinePlace(x1,y1,x2,y2);
+                    x1 = x2 = y1 = y2 = 0;
+                }
+            }
+
+            if (CurrentContol == MapEditControl.Sqaure) {
+
+                Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
+                ClickedRectangle.Fill = CurrentImage;
+
+                if (!roomStarted) {
+                    x1 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                    y1 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    roomStarted = true;
+                }
+                else {
+                    roomStarted = false;
+                    x2 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
+                    y2 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    RoomPlace(x1,y1,x2,y2);
+                    x1 = x2 = y1 = y2 = 0;
+                }
+            }
+
         }
 
+        bool lineStarted = false;
+        bool roomStarted = false;
+        int x1, x2, y1, y2;
         //This is for when you click and drag things, only applies to Draw, Erase, and panning around the Canvas
         private void MapViewer_MouseMove(object sender, MouseEventArgs e) {
 
@@ -251,6 +312,7 @@ namespace MapEditor {
                     //UpdateMap();
                 }
             }
+            //TODO: This doesn't clear the tileID
             if (CurrentContol == MapEditControl.Erase) {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
@@ -264,7 +326,7 @@ namespace MapEditor {
                 var pos = e.GetPosition(this);
 
                 var matrix = mt.Matrix;
-                matrix.Translate(pos.X - lastPos.X, pos.Y - lastPos.Y);
+                matrix.Translate((pos.X - lastPos.X) * 2, (pos.Y - lastPos.Y) * 2);
                 mt.Matrix = matrix;
                 lastPos = pos;
             }
@@ -349,6 +411,77 @@ namespace MapEditor {
         }
 
         int TilesHit = 0;
+    
+        //TODO: This only works in one direction
+        private void RoomPlace(int x, int y, int x2, int y2) {
+
+            int dx, dy;
+            dx = dy = 0;
+            int w = x2 - x;
+            int h = y2 - y;
+
+            if (w < 0) dx = -1; else if (w > 0) dx = 1;
+            if (h < 0) dy = -1; else if (h > 0) dy = 1;
+            //if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
+
+            if (fillRoom.IsChecked.Value) {
+                for (int i = x; i <= x2; i += dx) {
+                    for (int j = y; j <= y2; j+= dy) {
+                        Map.TileInformation[i, j].TileID = CurrentTile;
+                        SetImageAtCoord(i, j);
+                    }
+                }
+            }
+            else {
+                for (int i = x; i <= x2; i++) {
+                    //No clue why this is needed, but w/e
+                    Map.TileInformation[i, y].TileID = CurrentTile;
+                    SetImageAtCoord(i, y);
+                    Map.TileInformation[i, y2].TileID = CurrentTile;
+                    SetImageAtCoord(i, y2);
+                }
+                for (int j = y; j <= y2; j++) {
+                    Map.TileInformation[x, j].TileID = CurrentTile;
+                    SetImageAtCoord(x, j);
+                    Map.TileInformation[x2, j].TileID = CurrentTile;
+                    SetImageAtCoord(x2, j);
+                }
+            }
+        }
+
+        //Hoop doop da woosh over the head
+        //Thank the interwebs
+        private void LinePlace(int x, int y, int x2, int y2) {
+            int w = x2 - x;
+            int h = y2 - y;
+            int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+            if (w < 0) dx1 = -1; else if (w > 0) dx1 = 1;
+            if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
+            if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
+            int longest = Math.Abs(w);
+            int shortest = Math.Abs(h);
+            if (!(longest > shortest)) {
+                longest = Math.Abs(h);
+                shortest = Math.Abs(w);
+                if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
+                dx2 = 0;
+            }
+            int numerator = longest >> 1;
+            for (int i = 0; i <= longest; i++) {
+                Map.TileInformation[x, y].TileID = CurrentTile;
+                SetImageAtCoord(x, y);
+                numerator += shortest;
+                if (!(numerator < longest)) {
+                    numerator -= longest;
+                    x += dx1;
+                    y += dy1;
+                }
+                else {
+                    x += dx2;
+                    y += dy2;
+                }
+            }
+        }
 
         //Note: Not used, this was the stack version, and same problem occurs
         private void FloodFill2(Tile tile, int targetID, int replaceID) {
@@ -397,12 +530,14 @@ namespace MapEditor {
 
 
 
+        
+
         Point lastPos;
         bool isDragged = false;
 
-        
 
-        
+
+
 
 
 
@@ -410,9 +545,9 @@ namespace MapEditor {
             DrawButton.IsEnabled = true;
             EraseButton.IsEnabled = true;
             FillButton.IsEnabled = true;
+            LineButton.IsEnabled = true;
+            RoomButton.IsEnabled = true;
         }
-
-       
 
 
     }
