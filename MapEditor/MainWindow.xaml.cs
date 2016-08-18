@@ -224,25 +224,24 @@ namespace MapEditor {
 
         //When you just click on a tile, it runs this. Other functionality commented due to possible errors (none so far)
         private void MapViewer_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            int x, y;
             if (CurrentContol == MapEditControl.Draw) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = CurrentImage;
-                int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
-                Map.TileInformation[x, y].TileID = CurrentTile;
+                GetCoordFromRect(ClickedRectangle, out x, out y, CurrentTile);
                 //UpdateMap();
             }
             if (CurrentContol == MapEditControl.Erase) {
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
+                GetCoordFromRect(ClickedRectangle, out x, out y, -1);
             }
             if (CurrentContol == MapEditControl.Fill) {
                 CheckTileIDs(-1);
                 //All the good stuff for converting Canvas rect location to Map.TileInformation
                 Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                 ClickedRectangle.Fill = CurrentImage;
-                int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                GetCoordFromRect(ClickedRectangle, out x, out y);
                 int oldTile = Map.TileInformation[x, y].TileID;
                 //Map.TileInformation[x, y].TileID = CurrentTile;
 
@@ -261,14 +260,12 @@ namespace MapEditor {
 
 
                 if (!lineStarted) {
-                    x1 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                    y1 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    GetCoordFromRect(ClickedRectangle, out x1, out y1);
                     lineStarted = true;
                 }
                 else {
                     lineStarted = false;
-                    x2 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                    y2 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    GetCoordFromRect(ClickedRectangle, out x2, out y2);
                     LinePlace(x1,y1,x2,y2);
                     x1 = x2 = y1 = y2 = 0;
                 }
@@ -280,14 +277,12 @@ namespace MapEditor {
                 ClickedRectangle.Fill = CurrentImage;
 
                 if (!roomStarted) {
-                    x1 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                    y1 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    GetCoordFromRect(ClickedRectangle, out x1, out y1);
                     roomStarted = true;
                 }
                 else {
                     roomStarted = false;
-                    x2 = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                    y2 = (int)Canvas.GetTop(ClickedRectangle) / 32;
+                    GetCoordFromRect(ClickedRectangle, out x2, out y2);
                     RoomPlace(x1,y1,x2,y2);
                     x1 = x2 = y1 = y2 = 0;
                 }
@@ -306,18 +301,18 @@ namespace MapEditor {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                     ClickedRectangle.Fill = CurrentImage;
-                    int x = (int)Canvas.GetLeft(ClickedRectangle) / 32;
-                    int y = (int)Canvas.GetTop(ClickedRectangle) / 32;
-                    Map.TileInformation[x, y].TileID = CurrentTile;
+                    int X, Y;
+                    GetCoordFromRect(ClickedRectangle, out X, out Y);
                     //UpdateMap();
                 }
             }
-            //TODO: This doesn't clear the tileID
+
             if (CurrentContol == MapEditControl.Erase) {
                 if (e.LeftButton == MouseButtonState.Pressed) {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                     ClickedRectangle.Fill = new SolidColorBrush(Colors.White);
-
+                    int X, Y;
+                    GetCoordFromRect(ClickedRectangle, out X, out Y, -1);
                 }
             }
             if (isDragged == false) return;
@@ -351,8 +346,8 @@ namespace MapEditor {
         private void Sprite_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
             Rectangle curr = (Rectangle)e.OriginalSource;
             CurrentImage = (ImageBrush)curr.Fill;
-            int x = (int)Canvas.GetLeft(curr) / 32;
-            int y = (int)Canvas.GetTop(curr) / 32;
+            int x, y;
+            GetCoordFromRect(curr, out x, out y);
             CurrentTile = y * Map.SpriteSheet.GetLength(0) + x;
             CheckTileIDs(-1);
         }
@@ -397,8 +392,8 @@ namespace MapEditor {
             Map.TileInformation[x, y].TileID = CurrentTile;
             bool hit = false;
             foreach (Rectangle rect in rectangles) {
-                int X = (int)Canvas.GetLeft(rect) / 32;
-                int Y = (int)Canvas.GetTop(rect) / 32;
+                int X, Y;
+                GetCoordFromRect(rect, out X, out Y);
 
                 if (X == x && Y == y) {
                     hit = true;
@@ -408,6 +403,15 @@ namespace MapEditor {
 
             }
             if (!hit) throw new Exception();
+        }
+
+        private void GetCoordFromRect(Rectangle rect, out int x, out int y, int current = -2) {
+            x = (int)Canvas.GetLeft(rect) / TileSize;
+            y = (int)Canvas.GetTop(rect) / TileSize;
+            //Just a little bit of a hack
+            if (current != -2)
+            Map.TileInformation[x, y].TileID = current;
+            
         }
 
         int TilesHit = 0;
