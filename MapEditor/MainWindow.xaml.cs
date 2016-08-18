@@ -249,7 +249,7 @@ namespace MapEditor {
                 //SetTileIDs(-1);
                 CheckTileIDs(-1);
                 //The big problem
-                FloodFill2(Map.TileInformation[x, y], oldTile, CurrentTile);
+                FloodFill(Map.TileInformation[x, y], oldTile, CurrentTile);
                 CheckTileIDs(0);
             }
 
@@ -424,27 +424,42 @@ namespace MapEditor {
             if (h < 0) dy = -1; else if (h > 0) dy = 1;
             //if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
 
+            //Imagine that, actually got this working without any help
             if (fillRoom.IsChecked.Value) {
-                for (int i = x; i <= x2; i += dx) {
-                    for (int j = y; j <= y2; j+= dy) {
+                int i = x;
+                int j = y;
+                while (i != x2 + dx) {
+                    
+                    while (j != y2 + dy) {
                         Map.TileInformation[i, j].TileID = CurrentTile;
                         SetImageAtCoord(i, j);
+                        j += dy;
+                        if (j == y2 + dy) {
+                            j = y;
+                            break;
+                        }
                     }
+                    i += dx;
                 }
+              
             }
             else {
-                for (int i = x; i <= x2; i++) {
+                int i = x;
+                int j = y;
+                while (i != x2 + dx) {
                     //No clue why this is needed, but w/e
                     Map.TileInformation[i, y].TileID = CurrentTile;
                     SetImageAtCoord(i, y);
                     Map.TileInformation[i, y2].TileID = CurrentTile;
                     SetImageAtCoord(i, y2);
+                    i += dx;
                 }
-                for (int j = y; j <= y2; j++) {
+                while (j != y2 + dy) {
                     Map.TileInformation[x, j].TileID = CurrentTile;
                     SetImageAtCoord(x, j);
                     Map.TileInformation[x2, j].TileID = CurrentTile;
                     SetImageAtCoord(x2, j);
+                    j += dy;
                 }
             }
         }
