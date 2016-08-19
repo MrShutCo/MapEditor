@@ -302,7 +302,7 @@ namespace MapEditor {
                     Rectangle ClickedRectangle = (Rectangle)e.OriginalSource;
                     ClickedRectangle.Fill = CurrentImage;
                     int X, Y;
-                    GetCoordFromRect(ClickedRectangle, out X, out Y);
+                    GetCoordFromRect(ClickedRectangle, out X, out Y, CurrentTile);
                     //UpdateMap();
                 }
             }

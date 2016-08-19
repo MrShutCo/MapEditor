@@ -14,3 +14,22 @@ C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MapEditor.Propertie
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MapEditor.csproj.GenerateResource.Cache
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MapEditor.exe
 C:\Users\Mark\Documents\GitHub\MapEditor\MapEditor\obj\Debug\MapEditor.pdb
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\MapEditor.exe.config
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.exe
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.pdb
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\MapEditor.exe
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\MapEditor.pdb
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\RibbonControlsLibrary.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\WPFExtensions.dll
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\bin\Debug\WPFExtensions.pdb
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.csprojResolveAssemblyReference.cache
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MainWindow.g.cs
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\App.g.cs
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor_MarkupCompile.cache
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor_MarkupCompile.lref
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MainWindow.baml
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.g.resources
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.Properties.Resources.resources
+C:\Users\Tyer\Documents\Visual Studio 2015\Projects\MapEditor\MapEditor\obj\Debug\MapEditor.csproj.GenerateResource.Cache
